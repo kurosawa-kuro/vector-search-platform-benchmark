@@ -35,4 +35,12 @@ task note は1タスクに閉じるので「最近このエージェントは曖
 
 ---
 
-_まだ判断は記録されていません。`log-decision` が末尾に追記します。_
+## 2026-10-07T16:40Z — draw.io MCP は公式 `@drawio/mcp` を project-scoped で採用した
+- type: approach-choice
+- 根拠 (why): draw.io 系 MCP server は複数ある（`drawio-mcp-server` by lgazo はブラウザ拡張前提、`@next-ai-drawio/mcp-server` は別アプリ前提）。本 repo は図を `docs/図版/*.drawio` としてコミットしたいので、拡張や外部アプリに依存せずローカルファイルのページ単位編集ができる公式 `@drawio/mcp`（jgraph, Apache-2.0）を選んだ。秘密情報を持たないため `.mcp.json`（コミット対象）に置き、`enabledMcpjsonServers` で承認済みにした。
+- 影響範囲 (blast radius): ドキュメント図版のみ。`set_page` は `.drawio` を上書きするので ask に置いた。コード・インフラ・計測結果には触れない。完全に可逆（`.mcp.json` のエントリ削除で元に戻る）。
+- 撤退条件 (stop/revert): `npx -y @drawio/mcp` の起動失敗・図版運用が定着しない場合は `.mcp.json` と settings の `drawio` 行を削除し、text 図（02_architecture.md）だけに戻す。
+- 結果 (outcome): open — 7 tools の起動と `list_pages`/`get_page`/`set_page`/`search_shapes` の往復を CLI で確認済み。この端末には `xdg-open` が無く `open_*` の自動ブラウザ起動は失敗する（URL は返るので手動で開く）。
+- link: `.mcp.json`, `.claude/rules/docs.md`, `docs/specs/capability-boundary.md`
+
+--- session boundary 2026-10-07T16:41:25Z ---

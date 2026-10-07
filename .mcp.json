@@ -1,11 +1,10 @@
 {
-  "//": "Project-scoped MCP servers for this repo (committed, shared with the team). Personal/secret-bearing servers belong in .claude/settings.local.json or `claude mcp add`, NOT here — this file is public-release-bound. Delete this stub if the project uses no project-scoped MCP servers. See https://code.claude.com/docs for the mcpServers schema.",
-  "//example": {
-    "some-server": {
+  "//": "Project-scoped MCP servers for this repo (committed, shared with the team). Personal/secret-bearing servers belong in .claude/settings.local.json or `claude mcp add`, NOT here — this file is public-release-bound. See https://code.claude.com/docs for the mcpServers schema.",
+  "mcpServers": {
+    "drawio": {
+      "//": "公式 draw.io MCP server (jgraph/drawio-mcp, Apache-2.0)。秘密情報なし。tools: open_drawio_{xml,csv,mermaid} / list_pages / get_page / set_page / search_shapes。図の正本は docs/図版/*.drawio。DRAWIO_BASE_URL を置けば self-hosted draw.io に向けられる（既定 https://app.diagrams.net/）。",
       "command": "npx",
-      "args": ["-y", "@example/mcp-server"],
-      "env": { "EXAMPLE_ENDPOINT": "https://example.invalid" }
+      "args": ["-y", "@drawio/mcp"]
     }
-  },
-  "mcpServers": {}
+  }
 }

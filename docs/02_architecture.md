@@ -26,6 +26,8 @@ Amazon ESCI
                      Reports / condition matrix / ADR
 ```
 
+編集可能な同内容の図: [図版/アーキテクチャ全体.drawio](./図版/アーキテクチャ全体.drawio)（draw.io MCP で編集。上の text 図と内容を一致させる）
+
 ## 設計原則
 
 1. **公平な入力**: 同一 dataset、query、embedding、評価条件を両 backend で使う。
@@ -55,6 +57,7 @@ Amazon ESCI
 | Claude ガイド | Claude Code の司令ルール | `CLAUDE.md` |
 | タスク文書 | 一回性の作業計画・実装タスク | `docs/tasks/` |
 | Claude skills | Claude Code で繰り返し使う作業手順 | `.claude/skills/` |
+| 図版 | この章の構成・フローを図で表現（draw.io MCP で編集） | `docs/図版/` |
 
 ## 実行トポロジ
 

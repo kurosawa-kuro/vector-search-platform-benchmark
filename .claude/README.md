@@ -57,7 +57,7 @@ AI エージェント（Claude Code）を、このリポジトリで**安全に�
 | `settings.json` (`permissions`) | 操作の許可/承認/禁止を**物理的に**強制 | ハード | 常時 |
 | `settings.json` (`hooks`) + `hooks/` | 検出 hooks・自動整形・セッション文脈注入/ログの軽量自動処理 | ハード/nudge | イベント時 |
 | `settings.json` (`statusLine`) + `statusline.sh` | プロジェクト名・branch・active task 数・model を1行表示（装飾。不要なら両方削除） | — | 常時 |
-| `../.mcp.json` | project-scoped MCP server の置き場（既定は空 stub）。秘密を持つ server は `settings.local.json` へ | — | 常時 |
+| `../.mcp.json` | project-scoped MCP server の置き場。現在は `drawio`（公式 `@drawio/mcp`、図版の作成/編集）のみ。秘密を持つ server は `settings.local.json` へ | — | 常時 |
 | `rules/` の言語別（`rust`/`python`/`terraform`/`scripts`/`tests`） | 対象パス編集時だけ効くスタック規約。使わない言語の rule は削除 | ソフト | 該当パス編集時 |
 | `skills/` | 頻出・低リスクな作業手順の呼び出し（Layer 1–9 の手続き本体、main loop で実行） | 補助 | 呼ばれた時のみ |
 | `agents/` | 隔離コンテキストの subagent（5）。`explore`＝read-only 探索、`plan`＝実装計画、`verify`＝主張の反証、`review-diff`＝変更品質レビュー、`security-review`＝安全観点レビュー。skill が main loop なのに対し agent は別文脈 | 補助 | 呼ばれた時のみ |

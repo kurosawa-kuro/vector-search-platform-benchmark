@@ -39,6 +39,7 @@
 | [06_error_policy.md](./06_error_policy.md) | 失敗をどう分類し、再試行・停止・無効化するか |
 | [07_test_strategy.md](./07_test_strategy.md) | 実装正しさと比較の公平性をどう検証するか |
 | [08_release_runbook.md](./08_release_runbook.md) | 環境・ベンチマーク成果物・ADR をどう公開し、異常時に戻すか |
+| [図版/](./図版/) | 上記の構成・フローを図でどう表すか（`.drawio` が図の正本。定義の正本は本文側） |
 
 ## フェーズ別の読み順
 

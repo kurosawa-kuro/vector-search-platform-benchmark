@@ -26,6 +26,8 @@
 | パッケージ公開 | `npm publish`/`cargo publish`/`pypi upload`/`gh release` | **ask** | |
 | DNS/ドメイン | DNS レコード変更、ドメイン購入 | **ask** | |
 | オブジェクトストレージ | 本番バケットへの write/delete（`gsutil`/`aws s3`） | **ask** | |
+| 図版の閲覧/下書き | MCP `drawio`: `list_pages`/`get_page`/`search_shapes`/`open_drawio_{xml,csv,mermaid}` | **allow** | 読み取りとエディタ起動のみ。図の内容は URL fragment で渡り app.diagrams.net へは送信されない（self-hosted は `DRAWIO_BASE_URL`） |
+| 図版ファイルの書き込み | MCP `drawio`: `set_page` | **ask** | `docs/図版/*.drawio` の該当ページを上書きする。差分が読みにくいので都度承認 |
 | 保護ファイルパス編集 | `env/secret/**`、`infra/**`、`terraform/**`、`.github/workflows/**`、`**/migrations/**` | **`detect-safety-boundary` hook (exit 2)** | `change-boundary.md` と一致させる |
 | 不可逆なコード/履歴破壊 | `rm -rf`、`git push --force*`、`git reset --hard`、`git clean -fdx` | **deny** | 常に deny |
 

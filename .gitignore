@@ -26,6 +26,11 @@ env/secret.*.yaml
 .claude/settings.local.json
 CLAUDE.local.md
 
+# draw.io（正本は docs/図版/*.drawio。バックアップ・一時ファイル・書き出し画像は追跡しない）
+*.drawio.bkp
+*.drawio.dtmp
+docs/図版/export/
+
 # Logs
 *.log
 logs/
