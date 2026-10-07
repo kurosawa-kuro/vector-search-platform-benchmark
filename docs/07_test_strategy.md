@@ -101,7 +101,18 @@
 
 ## コマンドと品質ゲート
 
-実行 runtime と test framework が未確定のため、テストコマンドはまだ定義しない。`make test`、`make fmt`、`make lint` の実コマンドを実装したときに、この節を同時に更新する。
+アプリケーション runtime と test framework は未確定で、`make test`、`make fmt`、`make lint` は未実装。Local ECK 基盤には次の実コマンドを使う。
+
+```bash
+make local-preflight         # host / Docker / tool / resource 条件
+make local-up                # clean build または宣言状態への再 reconcile + smoke
+make local-smoke             # Operator / PVC / TLS / auth API / green health
+make local-verify-recovery   # Pod再作成 + PVC / marker / health 回復
+make local-status            # read-only inventory
+make local-down              # 専用clusterだけを破棄して残存ゼロを確認
+```
+
+Local infrastructure gate は、node `Ready`、ECK Operator `1/1`、Elasticsearch `Ready` / `green`、PVC `Bound`、CA検証付き authenticated API HTTP 200を必須とする。復旧 gate はPod UID変更、同じPVC名、marker存続、回復後`green`を必須とする。Secret値は出力や証跡へ保存しない。
 
 現時点で文書変更に実行できる最小検証:
 

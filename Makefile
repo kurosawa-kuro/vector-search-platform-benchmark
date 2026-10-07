@@ -1,4 +1,6 @@
-.PHONY: setup build run dev test fmt lint clean
+.PHONY: setup build run dev test fmt lint clean \
+	local-bootstrap local-preflight local-up local-status local-smoke \
+	local-verify-recovery local-down
 
 # Application
 APP_NAME := <your-project>
@@ -37,3 +39,25 @@ lint:
 # クリーンアップ
 clean:
 	@echo "TODO: 成果物削除コマンドを記述"
+
+# Local Kubernetes + ECK foundation
+local-bootstrap:
+	@./infra/local/bootstrap-kind.sh
+
+local-preflight: local-bootstrap
+	@./infra/local/preflight.sh
+
+local-up:
+	@./infra/local/up.sh
+
+local-status:
+	@./infra/local/status.sh
+
+local-smoke:
+	@./infra/local/smoke.sh
+
+local-verify-recovery:
+	@./infra/local/verify-recovery.sh
+
+local-down:
+	@./infra/local/down.sh

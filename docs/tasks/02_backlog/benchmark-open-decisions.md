@@ -10,6 +10,15 @@ Phase 0〜3 の実装・比較結果に影響する未決値を、根拠、比�
 
 ## Scope
 
+### 確定済み
+
+| ID | 決定 | 根拠 / 正本 |
+|---|---|---|
+| OD-006 | Phase 1 の Local Kubernetes runtime は kind、single control-plane node とする | ローカル専用、再構築可能、ECK 検証に必要な Kubernetes / StorageClass を最小構成で提供できる。実装は `infra/local/versions.env` と `infra/local/kind.yaml` |
+| OD-007 | kind v0.33.0、Kubernetes v1.34.11（digest pin）、ECK 3.5.0、Elasticsearch 9.5.5 | ECK 3.5.0 の Kubernetes 1.31+ 要件を満たし、host kubectl v1.33.4 との skew を +1 minor に収める。版の正本は `infra/local/versions.env` |
+
+OD-006 / OD-007 は local Phase 1 のみの決定であり、GKE topology やクラウド比較条件を固定しない。更新時は [kind releases](https://github.com/kubernetes-sigs/kind/releases)、[ECK download](https://www.elastic.co/downloads/elastic-cloud-kubernetes)、[ECK Elasticsearch quickstart](https://www.elastic.co/docs/deploy-manage/deploy/cloud-on-k8s/elasticsearch-deployment-quickstart) を確認し、digest / chart / Stack version を同時に更新する。
+
 ### 対象
 
 | ID | 論点 | 決定に必要な根拠 | 反映先 |
@@ -19,8 +28,8 @@ Phase 0〜3 の実装・比較結果に影響する未決値を、根拠、比�
 | OD-003 | ESCI field mapping、product text 組み立て、metadata filter 対象 | source schema、検索意図、欠損率 | 05 / ADR |
 | OD-004 | relevance label の gain mapping、tie、指標集計方法 | 数理定義、既存評価との比較可能性 | 05 / 07 |
 | OD-005 | embedding model / version / dimension / normalization / batch 条件 | 両 backend の対応条件、コスト、品質、再生性 | 01 / 05 / ADR |
-| OD-006 | Local Kubernetes runtime | ECK 対応、ローカルリソース、CI 適合性 | 02 / 04 / ADR |
-| OD-007 | Kubernetes / ECK / Elasticsearch の固定バージョン | 互換性、機能、ライセンス、サポート | 02 / 04 / 08 |
+| OD-006 | Local Kubernetes runtime（確定済み） | ECK 対応、ローカルリソース、CI 適合性 | 02 / 04 / ADR |
+| OD-007 | Kubernetes / ECK / Elasticsearch の固定バージョン（確定済み） | 互換性、機能、ライセンス、サポート | 02 / 04 / 08 |
 | OD-008 | HNSW / int8 / BBQ / DiskBBQ の対象範囲 | 製品版、ライセンス、比較可能性 | 01 / ADR |
 | OD-009 | GCP project / region、GKE node / disk / shard / replica topology | quota、単価、容量、データローカリティ | 02 / 04 / 08 |
 | OD-010 | Vertex AI Vector Search の構成・固定バージョン相当の記録方法 | 比較公平性、再現性、quota、単価 | 02 / 05 / 08 |

@@ -33,6 +33,20 @@
 
 - yes
 
+### Approval and fixed decisions
+
+2026-10-08、owner の「すぐ実装できるように環境インフラを整えてほしい」を本 task の実行承認として記録する。ローカル開発を優先し、次を固定する。
+
+- runtime: kind（single control-plane node）
+- kind: v0.33.0（repo-local、checksum 検証付き。host の v0.24.0 は変更しない）
+- Kubernetes: v1.34.11 node image（digest pin。host kubectl v1.33.4 との version skew を +1 minor に収める）
+- ECK: 3.5.0 cluster-wide Helm install
+- Elasticsearch: 9.5.5、1 node、CPU request / limit = 500m / 2、memory request / limit = 1 GiB / 2 GiB、PVC = 5 GiB
+- task memory budget: ECK 512 MiB + Elasticsearch 2 GiB limit（Kubernetes system component を除く）
+- swap: enabled のまま機能検証に限定し、本 task では変更しない
+- max attempts: 異なる失敗原因ごとに2回、同じ原因の再発は2回で停止
+- max changed files: 24
+
 ## Goal
 
 クリーンなローカル環境から、固定したバージョンと version-controlled な設定を使って project 専用 kind cluster、ECK Operator、1-node Elasticsearch を構築し、PVC / TLS / authenticated API の smoke と安全な teardown まで再現可能にする。
@@ -60,7 +74,7 @@
 - ECK / Prometheus CRD and workloads: none
 - Helm repositories: none
 
-Local Kubernetes runtime と Kubernetes / ECK / Elasticsearch バージョンは [benchmark-open-decisions.md](./benchmark-open-decisions.md) の OD-006 / OD-007 で未決。暗黙の latest またはデフォルトバージョンで構築しない。
+Local Kubernetes runtime と Kubernetes / ECK / Elasticsearch バージョンは [benchmark-open-decisions.md](../02_backlog/benchmark-open-decisions.md) の OD-006 / OD-007 で確定し、`infra/local/versions.env` を実装上の正本とした。暗黙の latest またはデフォルトバージョンで構築しない。
 
 ## Scope
 
@@ -214,3 +228,37 @@ Evidence Level 4 として、次を task の Verification に残す。この tas
 - 実行できなかった検証、failed / invalid 操作、残るリスクの明記
 
 すべての PASS にコマンド出力または `file:line` を紐付ける。実測していない項目は PASS ではなく `UNVERIFIED` とする。
+
+## Verification
+
+2026-10-08、WSL2 / Ubuntu 24.04 上で Evidence Level 4 を取得した。Secret は名前だけを記録し、値は保存していない。
+
+### PASS
+
+- owner approval: 本文の「Approval and fixed decisions」に記録。変更は24 file上限内（20 logical files）、`infra/local/**` と許可済みdocs / Makefileだけ。
+- `make local-preflight`: Docker reachable、kind 0.33.0、kubectl 1.33.4、Helm 3.18.4、available memory 13033 MiB、disk 905 GiB、`vm.max_map_count=1048576`、swap 4096 MiB free。開始時 kind cluster / current context は無し。
+- `sha256sum infra/local/.bin/kind`: `aee6151561422756b764a4ae28e7f44cda5af5a9eead3cc9985112b1de8d8e0d` で `infra/local/versions.env` と一致。
+- clean-state `make local-up`: `kindest/node:v1.34.11@sha256:44e222ee2132dab25ff87301682f89eb82c7880ea3a1bf543bfe9708fd08d67d`、Kubernetes v1.34.11、ECK chart / image 3.5.0、Elasticsearch 9.5.5 で構築成功。
+- `make local-up` 再実行: Helm release revision 2、namespace unchanged、Elasticsearch configured、全resource ready。宣言状態への再 reconcile 成功。
+- runtime inventory: node `Ready`、`elastic-operator-0` `1/1 Running`、Elasticsearch `Ready` / `green` / 1 node、Pod `1/1 Running`、StatefulSet `1/1`、PVC `Bound` / 5 GiB。
+- `helm --kube-context kind-vector-search-benchmark list -n elastic-system`: `eck-operator-3.5.0` / app version 3.5.0 / `deployed`。
+- `kubectl get crd`: `elasticsearches.elasticsearch.k8s.elastic.co` を含む12個のECK CRDを確認。
+- owner reference: StatefulSetとPVCはいずれも `Elasticsearch/benchmark` をownerに持つ。Service、ECK生成TLS / credential Secretの存在を確認。
+- `make local-smoke`: ECK Operator ready、PVC Bound、TLS Secret存在、ECK生成CAによるTLS検証、authenticated API HTTP 200、settle window後もhealth `green`。`local-infra-smoke` markerを保存。
+- `make local-verify-recovery`（最終 v1.34.11 cluster）: Pod UID `15372810-7a9d-417a-a86f-0842e9eeb5cb` → `34117f1d-af78-4005-a1b4-457f932f5908`。PVC `elasticsearch-data-benchmark-es-default-0` は同名 / `Bound`、marker存続、API回復、health `green`。
+- `make local-down`: 削除対象を表示後、専用 cluster / kube context / Docker node container が0件。続く `make local-up` でclean stateから再構築し、最終的にclusterを稼働状態で残した。
+- 対象外不変: 構築前に他kind cluster / kube contextは存在せず、GKE / Vertex / Terraform / cloud credentialへの操作は0件。
+- 実装と運用手順: `Makefile`、`infra/local/`、`docs/04_workflows.md`、`docs/07_test_strategy.md`、`docs/08_release_runbook.md`、OD-006 / OD-007へ反映。
+- final validation: `bash -n`、KUBECONFIGを空にしたwrong-context拒否、Kubernetes server-side dry-run、kubectl client v1.33.4 / server v1.34.11 skew確認、`git diff --check`、秘密情報pattern scanがPASS。`make local-status`で最終clusterのgreenを再観測。
+
+### Failed / invalid attempts and corrections
+
+- 初回smokeはport-forward先を証明書SAN外のIP / `localhost`として検証しHTTP 000。service DNSを`curl --resolve`で127.0.0.1へ向け、ECK CAでSANを含め完全検証するよう修正した。
+- 初回marker indexはdefault replica=1でsingle-node clusterをyellowにした。local-only smokeで既存indexをreplica=0へ正規化し、system index作成後のsettle windowでもgreenを再確認するよう修正した。
+- 当初選んだKubernetes v1.35.8はhost kubectl v1.33.4とのminor skew警告を検出。v1.34.11 digestへ下げて再構築し、+1 minorへ収めた。v1.35.8での結果は最終evidenceから除外した。
+
+### Remaining risks / limits
+
+- single-node、swap enabled、kind local-path storageであり、性能・HA・GKE相当性の証拠には使えない。
+- `local-smoke` のreplica=0正規化はこの専用local clusterだけが対象。multi-node / GKEへ流用しない。
+- Kibana、Prometheus Operator、rolling upgrade、PVC resize、snapshot / restore、multi-node / node drainは本taskでは未検証。

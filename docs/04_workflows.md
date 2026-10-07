@@ -2,7 +2,7 @@
 
 ## 現在の実行状態
 
-現時点の `Makefile` と `src/` はスケルトン。`make setup`、`make run`、`make test` 等はインターフェース名だけがあり、ベンチマークを実行する実コマンドは未実装。コマンドを実装した task で、この文書の対応手順も同時に更新する。
+`src/` とベンチマーク用の `make setup`、`make run`、`make test` 等はスケルトン。Local Kubernetes + ECK 基盤だけは `infra/local/` と `make local-*` に実装済みで、Elasticsearch API smoke まで再実行できる。
 
 ## 作業開始
 
@@ -48,6 +48,23 @@ Phase 0: Dataset / Evaluation Foundation
 
 ## Phase 1: Local Kubernetes + ECK
 
+### ローカル基盤コマンド
+
+版の正本は `infra/local/versions.env`。`local-up` は固定 kind の取得、preflight、専用 cluster 作成、ECK / Elasticsearch 適用、TLS / authenticated API smoke を順に実行する。
+
+```bash
+make local-preflight
+make local-up
+make local-status
+make local-smoke
+make local-verify-recovery
+```
+
+- 対象 context は `kind-vector-search-benchmark` に固定し、変更操作前に current context と cluster 名を検証する。
+- 1-node 開発環境では replica を配置できないため、smoke は既存 local index の replica 数を0へ正規化し、settle window 後も health `green` であることを確認する。この設定を GKE / performance scenario へ流用しない。
+- `local-verify-recovery` は marker を投入済みの状態で Elasticsearch Pod を再作成し、Pod UID の変更、同じ PVC の `Bound`、marker の存続、health `green` を検証する。
+- cluster を破棄する場合だけ `make local-down` を使う。対象一覧を表示してから専用 cluster を削除し、cluster / context / node container の残存ゼロを確認する。
+
 ### 前提
 
 - Phase 0 の dataset / embedding artifact と evaluator がゲートを通過している。
@@ -55,8 +72,8 @@ Phase 0: Dataset / Evaluation Foundation
 
 ### 手順
 
-1. Local Kubernetes を用意し、ECK Operator を構築する。
-2. Elasticsearch CRD、PVC、Secret / TLS を構成し、cluster の ready を確認する。
+1. `make local-up` で Local Kubernetes、ECK Operator、Elasticsearch を構築する。
+2. `make local-status` と `make local-smoke` で CRD、PVC、Secret / TLS、authenticated API、cluster ready / green を確認する。
 3. common product / embedding artifact を index し、件数と embedding provenance を検証する。
 4. 同一 query set で BM25、Vector、Hybrid、Hybrid + RRF を実行する。
 5. ranked result を共通契約へ正規化し、quality metrics を算出する。

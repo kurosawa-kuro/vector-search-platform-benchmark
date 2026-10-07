@@ -30,17 +30,27 @@
 6. secret scan と、manifest / log / result / report が credential を含まないことの確認を行う。
 7. 公開 report で failed / invalid / excluded run、制約、pricing date が開示されていることを確認する。
 
-実行 runtime と release tooling が未確定のため、コマンドはまだ定義しない。ツール実装時に、この runbook に実在するコマンドと期待結果を追加する。
+アプリケーション runtime と cloud release tooling は未確定。Local ECK の実コマンドは次節を正とする。
 
 ## デプロイ / リリース
 
 ### Local ECK
 
-1. 対象の Local Kubernetes runtime と利用可能リソースを確認する。
-2. 固定済み ECK / Elasticsearch manifest を適用する。
-3. cluster / PVC / TLS の ready を確認する。
-4. versioned dataset / embedding artifact を ingest し、BackendManifest を検証する。
-5. デプロイ後 smoke を実行する。
+1. `make local-preflight` で Docker、固定 tool、空き memory / disk、`vm.max_map_count`、swap、既存 cluster / context を確認する。
+2. `make local-up` で `kind-vector-search-benchmark`、ECK Operator、1-node Elasticsearchを構築する。このコマンドは再実行可能で、TLS / auth API smoke まで含む。
+3. `make local-status` で node、Operator、Elasticsearch、Pod、PVC、Service、StatefulSet を確認する。
+4. infrastructure復旧を確認する場合は `make local-verify-recovery` を実行する。この操作はElasticsearch Podを1回削除・再作成する。
+5. versioned dataset / embedding artifact を ingest し、BackendManifest を検証する（別task）。
+
+固定版とresource budgetは `infra/local/versions.env`、`infra/local/eck-values.yaml`、`infra/local/elasticsearch.yaml.tpl` を参照する。localhostへの平文公開は行わず、smoke中だけport-forwardし、ECK生成CAと実行時取得credentialでHTTPS接続する。
+
+破棄が必要な場合:
+
+```bash
+make local-down
+```
+
+このコマンドは専用contextとの一致を必須にし、削除前に対象を表示する。完了条件は専用kind cluster、kube context、Docker node containerがすべて0件であること。通常の開発引き渡しではclusterを起動したままにする。
 
 ### GKE Standard + ECK
 
