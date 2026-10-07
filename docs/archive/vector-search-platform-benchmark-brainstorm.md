@@ -1,3 +1,14 @@
+# Archive: Vector Search Platform Benchmark Brainstorm
+
+> 退避元: `docs/tasks/01_idea/vector-search-platform-benchmark-project-concept.md`  
+> 蒸留先: `docs/01_requirements.md` 〜 `docs/08_release_runbook.md`  
+> 退避日: 2026-10-08  
+> 権威: archive は素材の保存先であり、現行仕様ではない。矛盾時は `docs/00_index.md` の権威順位に従う。
+
+以下は蒸留前の初期構想を、出典・候補・思考過程として保存したもの。
+
+---
+
 # Vector Search Platform Benchmark
 
 ## 0. 推奨するプロジェクト名・リポジトリ名

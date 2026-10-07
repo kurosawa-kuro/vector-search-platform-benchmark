@@ -14,7 +14,8 @@
 - 判断日誌 / 蒸留記憶: `docs/decisions/decision-log.md` / `docs/memory/`
 - Feature spec（実装前・1 機能ごと）: `SPEC.md`
 - Task notes: `docs/tasks/`
-- Planning brief（未確定の初期構想）: `docs/tasks/01_idea/vector-search-platform-benchmark-project-concept.md`
+- Open decisions: `docs/tasks/02_backlog/benchmark-open-decisions.md`
+- Distillation source（非権威・参考のみ）: `docs/archive/vector-search-platform-benchmark-brainstorm.md`
 
 **spec の使い分け（混同しない）**: `SPEC.md` = 今から作る 1 機能の使い捨て実装スペック（公式 Explore→Plan→Implement→Commit の入口、新セッションで実行）。`docs/specs/` = 恒久アーキ設計マスター。`docs/tasks/` = タスク台帳。
 

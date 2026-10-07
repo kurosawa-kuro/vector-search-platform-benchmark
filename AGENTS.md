@@ -11,7 +11,7 @@ Codex は作業前にこのファイルを読むため、ここには repo 共�
 - データ: Amazon Shopping Queries Dataset / ESCI。公開データのみを使い、実案件の商品・query・Ground Truth・特徴量・ログは使用しない。
 - 検索方式: BM25、Dense Vector ANN、Hybrid Search、Hybrid + RRF。Elasticsearch は HNSW、metadata filter、quantization も検証対象とする。
 - 主要技術: Elasticsearch、ECK、Kubernetes（Local から GKE Standard へ段階的に移行）、Vertex AI Vector Search、共通 embedding / benchmark runner。
-- 作業中の初期構想の詳細: `docs/tasks/01_idea/vector-search-platform-benchmark-project-concept.md`。これは未確定の planning brief であり、確定後は `docs/01_requirements.md`、`docs/02_architecture.md`、`docs/adr/` へ昇格する。
+- 現行仕様・設計は `docs/00_index.md` から `docs/01_requirements.md`〜`docs/08_release_runbook.md` を迎る。未決値は `docs/tasks/02_backlog/benchmark-open-decisions.md`、蒸留前の構想は `docs/archive/vector-search-platform-benchmark-brainstorm.md` にある。
 
 ## ベンチマーク不変条件
 

@@ -10,13 +10,14 @@
 
 ## ステータス
 
-現在は計画・評価基盤の準備段階です。リポジトリにはプロジェクトハーネスと初期構想がありますが、ベンチマーク本体と実行可能なセットアップはまだ実装されていません。
+現在は計画・評価基盤の準備段階です。要件と基礎設計は `docs/01_requirements.md`〜`docs/08_release_runbook.md` に整理済みですが、ベンチマーク本体と実行可能なセットアップはまだ実装されていません。
 
-- 作業中の初期構想: [vector-search-platform-benchmark-project-concept.md](docs/tasks/01_idea/vector-search-platform-benchmark-project-concept.md)
-- ドキュメント索引: [docs/00_index.md](docs/00_index.md)
+- 現行仕様・設計: [docs/00_index.md](docs/00_index.md)
+- 蒸留前の構想（参考資料）: [vector-search-platform-benchmark-brainstorm.md](docs/archive/vector-search-platform-benchmark-brainstorm.md)
+- 未決のベンチマーク条件: [benchmark-open-decisions.md](docs/tasks/02_backlog/benchmark-open-decisions.md)
 - 実行中タスク: [docs/tasks/README.md](docs/tasks/README.md)
 
-初期構想はまだ確定仕様ではありません。確定した要件・設計・判断は `docs/01_requirements.md`、`docs/02_architecture.md`、`docs/adr/` へ順次昇格します。
+構想に含まれていた候補と未決値は、現行仕様と混ぜず archive と backlog で管理します。確定した判断は `docs/adr/` へ昇格します。
 
 ## 比較対象
 
