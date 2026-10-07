@@ -1,0 +1,9 @@
+# Project path/name source of truth.
+#
+# Edit this file after moving or renaming the project, then run:
+#   make render-project-config
+
+projectName: vector-search-platform-benchmark
+repoRoot: /home/ubuntu/repos/vector-search-platform-benchmark
+workspaceRoot: /home/ubuntu/repos
+homeDir: /home/ubuntu
